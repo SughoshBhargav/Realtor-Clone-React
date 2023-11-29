@@ -2,13 +2,21 @@ import React, { useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import {getAuth,createUserWithEmailAndPassword,updateProfile} from 'firebase/auth'
+import {db} from '../firebase';
+import { serverTimestamp } from "firebase/firestore";
+import { doc , setDoc } from "firebase/firestore"; 
+import { useNavigate } from 'react-router-dom';
+import {toast} from 'react-toastify'
 
 export default function SignUp() {
+
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: "",
+    email: "",
+    password: "",
   });
 
   const {name, email, password } = formData;
@@ -20,6 +28,43 @@ export default function SignUp() {
     }));
   }
 
+  async function onSubmit(e){
+    e.preventDefault()
+  
+
+  try {
+    const auth = getAuth()
+    const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+
+    updateProfile(auth.currentUser,{
+      displayName:name,
+    })
+
+    const user = userCredential.user;
+    const formDataCopy = {...formData}
+    delete formDataCopy.password;
+    formDataCopy.timestamp  = serverTimestamp(); //to get the time so that it can be used to store when the user used his account
+    
+    await setDoc(doc(db,"users",user.uid),formDataCopy);
+    navigate("/")
+    
+  } catch (error) {
+    switch (error.code) {
+      case "auth/weak-password":
+        toast.error("Weak password. Please use a stronger password.");
+        break;
+      case "auth/email-already-in-use":
+        toast.error("Email is already in use. Please choose another email.");
+        break;
+      case "auth/invalid-email":
+        toast.error("Invalid email format. Please provide a valid email address.");
+        break;
+      default:
+        toast.error("An error occurred. Please try again later.");
+        break;
+    }
+  }
+  }
   return (
     <section className='flex flex-col items-center justify-center min-h-screen'>
       <h1 className='text-3xl text-center mt-6 font-bold'>Sign Up</h1>
@@ -34,7 +79,7 @@ export default function SignUp() {
         </div>
 
         <div className='w-full md:w-[76%] lg:w-[50%] ml-0 md:ml-6'>
-          <form className='flex flex-col'>
+          <form onSubmit={onSubmit} className='flex flex-col'>
 
           <input
               className='mb-6 w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out'
