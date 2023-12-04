@@ -11,12 +11,11 @@ export function useAuthStatus() {
             if (user) {
                 setLoggedIn(true);
             } else {
-                setLoggedIn(false); // Set loggedIn to false if there's no authenticated user
+                setLoggedIn(false); 
             }
             setCheckingStatus(false);
         });
 
-        // Clean up the listener when the component unmounts
         return () => {
             unsubscribe();
         };
