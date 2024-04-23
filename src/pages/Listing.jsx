@@ -6,8 +6,7 @@ import Spinner from "../components/Spinner";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FaBath, FaChair, FaMapMarkerAlt, FaParking } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
-
-
+import { getAuth } from "firebase/auth";
 import SwiperCore, {
   EffectFade,
   Autoplay,
@@ -16,12 +15,16 @@ import SwiperCore, {
 } from "swiper";
 import "swiper/css/bundle";
 import { FaShare } from "react-icons/fa";
+import Contact from "../components/Contact";
 
 export default function Listing() {
+
+  const auth = getAuth()
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false)
+  const [contactLandlord,setContactLandlord] = useState(false)
   SwiperCore.use([Autoplay, Navigation, Pagination]); // Use modules
 
   useEffect(() => {
@@ -71,7 +74,7 @@ export default function Listing() {
       </div>
       {shareLinkCopied && <p className="fixed top-[23%] right-[5%] font-semibold border-2 border-gray-400 rounded-md bg-white z-10 p-2">Link Copied</p>}
 
-      <div className="m-4 flex flex-col md:flex-row max-6xl lg:mx-auto  
+      <div className="m-8 flex flex-col md:flex-row max-6xl lg:mx-auto  
       p-4 rounded-lg bg-white lg:space-x-5 shadow-lg ">
         <div className=" w-full h-[200px] lg-[400px]">
           <p className="text-2xl font-bold m-3 text-blue-900">
@@ -97,7 +100,7 @@ export default function Listing() {
             <span className="font-semibold">Description - </span>
             {listing.description}
           </p>
-          <u className="flex items-center space-x-2 text-sm sm:space-x-10 font-semibold"l>
+          <u className="flex items-center mb-6 space-x-2 text-sm sm:space-x-10 font-semibold"l>
             <li className="flex items-center whitespace-nowrap">
               <FaBed className="text-lg mr-1"/>
               {+listing.bedrooms>1?`${listing.bedrooms} Beds`:"1 Bed"}
@@ -117,7 +120,16 @@ export default function Listing() {
             
           </u>
         </div> 
-        <div className="bg-blue-300 w-full h-[200px] lg-[400px] z-10 overflow-x-hidden"></div>
+        <div className="bg-blue-300 w-full z-10 overflow-x-hidden">
+          {listing.userRef !== auth.currentUser?.uid && !contactLandlord &&(      
+            <div className="mt-6">
+            <button onClick={()=>setContactLandlord(true)} className="px-7 py-3 bg-blue-600 text-white font-medium text-sm-uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg w-full text-center transition duration-150 ease-in-out"> Contact Landloard</button>
+            </div>      
+          )}
+          {contactLandlord &&(
+            <Contact userRef={listing.userRef} listing={listing}/>
+          )}
+        </div>
       </div>
     </main>
   );
