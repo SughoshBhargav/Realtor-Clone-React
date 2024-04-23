@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Slider from '../components/Slider'
 
 export default function Home() {
+
+
   return (
-    <h1>Home</h1>
+    <div>
+      <Slider/>
+    </div>
   )
 }

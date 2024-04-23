@@ -74,9 +74,9 @@ export default function Listing() {
       </div>
       {shareLinkCopied && <p className="fixed top-[23%] right-[5%] font-semibold border-2 border-gray-400 rounded-md bg-white z-10 p-2">Link Copied</p>}
 
-      <div className="m-8 flex flex-col md:flex-row max-6xl lg:mx-auto  
+      <div className=" ml-106 items-center flex flex-col md:flex-row max-6xl lg:mx-auto  
       p-4 rounded-lg bg-white lg:space-x-5 shadow-lg ">
-        <div className=" w-full h-[200px] lg-[400px]">
+        <div className="ml-9 align-center w-[800px] items-center">
           <p className="text-2xl font-bold m-3 text-blue-900">
             {listing.name}-${listing.offer
               ?listing.discountedPrice
@@ -100,6 +100,11 @@ export default function Listing() {
             <span className="font-semibold">Description - </span>
             {listing.description}
           </p>
+          <p className="mt-3 mb-3"> 
+            <span className="font-semibold">Address - </span>
+            {listing.address}
+          </p>
+          
           <u className="flex items-center mb-6 space-x-2 text-sm sm:space-x-10 font-semibold"l>
             <li className="flex items-center whitespace-nowrap">
               <FaBed className="text-lg mr-1"/>
@@ -109,6 +114,8 @@ export default function Listing() {
               <FaBath className="text-lg mr-1"/>
               {+listing.bathroom>1?`${listing.bathroom} Bathrooms`:"1 Bath"}
             </li>
+           
+
             <li className="flex items-center whitespace-nowrap">
               <FaParking className="text-lg mr-1"/>
               {listing.parking>1?"Parking spot":"No Parking"}
@@ -120,9 +127,9 @@ export default function Listing() {
             
           </u>
         </div> 
-        <div className="bg-blue-300 w-full z-10 overflow-x-hidden">
+        <div className="  w-[500px] z-10 overflow-x-hidden">
           {listing.userRef !== auth.currentUser?.uid && !contactLandlord &&(      
-            <div className="mt-6">
+            <div className="">
             <button onClick={()=>setContactLandlord(true)} className="px-7 py-3 bg-blue-600 text-white font-medium text-sm-uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg w-full text-center transition duration-150 ease-in-out"> Contact Landloard</button>
             </div>      
           )}
